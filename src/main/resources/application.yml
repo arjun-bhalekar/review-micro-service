@@ -7,12 +7,15 @@ spring:
   application:
     name: review-micro-service
   datasource:
-    url: jdbc:h2:mem:test
-  h2:
-    console:
-      enabled: true
+    url: jdbc:postgresql://localhost:5432/review
+    username: parjunb
+    password: parjunb
+#    url: jdbc:h2:mem:test
+#  h2:
+#    console:
+#      enabled: true
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
-
+    database: POSTGRESQL
