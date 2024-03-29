@@ -33,8 +33,3 @@ management:
   tracing:
     sampling:
       probability: 1.0
-#    brave:
-#      span-joining-supported: true
-#    propagation:
-#      type:
-#        - B3
