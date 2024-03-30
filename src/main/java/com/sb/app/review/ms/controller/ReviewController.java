@@ -1,6 +1,7 @@
 package com.sb.app.review.ms.controller;
 
 import com.sb.app.review.ms.entity.Review;
+import com.sb.app.review.ms.messaging.ReviewMessageProducer;
 import com.sb.app.review.ms.service.ReviewService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,11 @@ import java.util.Objects;
 public class ReviewController {
 
     private ReviewService reviewService;
+    private ReviewMessageProducer reviewMessageProducer;
 
-    public ReviewController(ReviewService reviewService) {
+    public ReviewController(ReviewService reviewService, ReviewMessageProducer reviewMessageProducer) {
         this.reviewService = reviewService;
+        this.reviewMessageProducer = reviewMessageProducer;
     }
 
     @GetMapping
@@ -28,9 +31,10 @@ public class ReviewController {
     public ResponseEntity<String> addReview(@RequestParam Long companyId, @RequestBody Review review) {
 
         boolean isReviewSaved = reviewService.addReview(companyId, review);
-        if (isReviewSaved)
+        if (isReviewSaved) {
+            reviewMessageProducer.sendMessage(review);
             return new ResponseEntity<>("Review added successfully", HttpStatus.OK);
-        else
+        } else
             return new ResponseEntity<>("Review not saved", HttpStatus.NOT_FOUND);
 
     }
@@ -63,6 +67,15 @@ public class ReviewController {
         else
             return new ResponseEntity<>("Review not deleted",
                     HttpStatus.OK);
+    }
+
+    @GetMapping("/averageRating")
+    public Double getAverageReview(@RequestParam Long companyId) {
+        List<Review> reviewList = reviewService.getAllReviews(companyId);
+        double averageRating = reviewList.stream()
+                .mapToDouble(Review::getRating)
+                .average().orElse(0.0);
+        return averageRating;
     }
 
 }
