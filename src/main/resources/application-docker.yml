@@ -3,17 +3,17 @@ server:
   port: 8083
 
 job-service:
-  url: http://localhost:8082
+  url: http://job:8082
 company-service:
-  url: http://localhost:8081
+  url: http://company:8081
 review-service:
-  url: http://localhost:8083
+  url: http://review:8083
 
 spring:
   application:
     name: review-micro-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/review
+    url: jdbc:postgresql://postgres_container:5432/review
     username: parjunb
     password: parjunb
 #    url: jdbc:h2:mem:test
@@ -28,7 +28,7 @@ spring:
 
 # RabbitMQ
   rabbitmq:
-    host: localhost
+    host: rabbitmq
     port: 5672
     username: guest
     password: guest
@@ -41,10 +41,13 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://service-registry:8761/eureka/
 
 # zipkin
 management:
   tracing:
     sampling:
       probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
